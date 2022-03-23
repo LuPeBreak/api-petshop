@@ -1,0 +1,5 @@
+default.json
+
+node_modules
+
+*.log
