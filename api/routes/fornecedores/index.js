@@ -1,6 +1,6 @@
 const app = require("express").Router();
-const repository = require("../../repository/FornecedorRepository");
-const Fornecedor = require("../../model/ModelFornecedor");
+const repository = require("../../repositories/FornecedorRepository");
+const Fornecedor = require("../../model/Fornecedores");
 
 app.get("/", async (req, res) => {
   const fornecedores = await repository.listar();
@@ -8,10 +8,14 @@ app.get("/", async (req, res) => {
 });
 
 app.post("/", async (request, response) => {
-  const dadosDoFornecedor = request.body;
-  const fornecedor = new Fornecedor(dadosDoFornecedor);
-  await fornecedor.criar();
-  response.json(fornecedor);
+  try {
+    const dadosDoFornecedor = request.body;
+    const fornecedor = new Fornecedor(dadosDoFornecedor);
+    await fornecedor.criar();
+    response.json(fornecedor);
+  } catch (err) {
+    response.status(400).json({ Message: err.message });
+  }
 });
 
 app.get("/:id", async (request, response) => {

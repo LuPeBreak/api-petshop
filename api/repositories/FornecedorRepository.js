@@ -22,7 +22,7 @@ module.exports = {
     });
   },
   async deletar(id) {
-    return Migration.destroy({
+    return await Migration.destroy({
       where: {
         id: id,
       },

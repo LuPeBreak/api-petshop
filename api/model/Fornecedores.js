@@ -1,4 +1,4 @@
-const repository = require("../repository/FornecedorRepository");
+const repository = require("../repositories/FornecedorRepository");
 class Fornecedor {
   constructor({
     id,
@@ -19,6 +19,7 @@ class Fornecedor {
   }
 
   async criar() {
+    this.validar();
     const resultado = await repository.inserir({
       empresa: this.empresa,
       email: this.email,
@@ -63,6 +64,16 @@ class Fornecedor {
   async deletar() {
     await this.carregar();
     return await repository.deletar(this.id);
+  }
+
+  validar() {
+    const campos = ["empresa", "email", "categoria"];
+    campos.forEach((campo) => {
+      const valor = this[campo];
+      if (typeof valor !== "string" || valor.length === 0) {
+        throw new Error(`O Campo '${campo}' é invalido `);
+      }
+    });
   }
 }
 
