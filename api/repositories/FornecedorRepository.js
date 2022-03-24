@@ -10,7 +10,9 @@ module.exports = {
   async buscarPorId(id) {
     const encontrado = await Migration.findOne({ where: { id: id } });
     if (!encontrado) {
-      throw new Error("fornecedor nao encontrado");
+      const err = new Error("fornecedor nao encontrado");
+      err.status = 404;
+      throw err;
     }
     return encontrado;
   },
@@ -22,7 +24,7 @@ module.exports = {
     });
   },
   async deletar(id) {
-    return await Migration.destroy({
+    return Migration.destroy({
       where: {
         id: id,
       },

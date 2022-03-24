@@ -54,7 +54,9 @@ class Fornecedor {
     });
 
     if (Object.keys(dadosParaAtualizar).length === 0) {
-      throw new Error("nao foram fornecidos dados para atualizar");
+      const err = new Error("nao foram fornecidos dados para atualizar");
+      err.status = 400;
+      throw err;
     }
 
     await repository.atualizar(this.id, dadosParaAtualizar);
@@ -68,12 +70,20 @@ class Fornecedor {
 
   validar() {
     const campos = ["empresa", "email", "categoria"];
+    const errors = {};
     campos.forEach((campo) => {
       const valor = this[campo];
       if (typeof valor !== "string" || valor.length === 0) {
-        throw new Error(`O Campo '${campo}' é invalido `);
+        errors[campo] = `O Campo '${campo}' é invalido `;
       }
     });
+
+    if (Object.keys(errors).length > 0) {
+      const err = new Error("Campo(s) invalido");
+      err.error = errors;
+      err.status = 400;
+      throw err;
+    }
   }
 }
 
