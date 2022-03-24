@@ -8,8 +8,8 @@ app.get("/", async (req, res) => {
 });
 
 app.post("/", async (request, response) => {
-  const dados = request.body;
-  const fornecedor = new Fornecedor(dados);
+  const dadosDoFornecedor = request.body;
+  const fornecedor = new Fornecedor(dadosDoFornecedor);
   await fornecedor.criar();
   response.json(fornecedor);
 });
@@ -21,7 +21,37 @@ app.get("/:id", async (request, response) => {
     await fornecedor.carregar();
     response.json(fornecedor);
   } catch (err) {
-    response.status(400).json(err.message)
+    response.status(400).json({ Message: err.message });
+  }
+});
+
+app.put("/:id", async (request, response) => {
+  try {
+    const id = request.params.id;
+    const dadosDoFornecedorAtualizados = request.body;
+
+    const fornecedor = new Fornecedor({ id, ...dadosDoFornecedorAtualizados });
+    await fornecedor.atualiza({ ...dadosDoFornecedorAtualizados });
+
+    response.json(fornecedor);
+  } catch (err) {
+    response.status(400).json({ Message: err.message });
+  }
+});
+
+app.delete("/:id", async (request, response) => {
+  try {
+    const id = request.params.id;
+
+    const fornecedor = new Fornecedor({ id });
+    await fornecedor.deletar();
+
+    response.json({
+      message: "fornecedor deletado",
+      fornecedor: fornecedor,
+    });
+  } catch (err) {
+    response.status(400).json({ Message: err.message });
   }
 });
 

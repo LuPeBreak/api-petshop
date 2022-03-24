@@ -14,4 +14,18 @@ module.exports = {
     }
     return encontrado;
   },
+  async atualizar(id, dadosParaAtualizar) {
+    return Migration.update(dadosParaAtualizar, {
+      where: {
+        id: id,
+      },
+    });
+  },
+  async deletar(id) {
+    return Migration.delete({
+      where: {
+        id: id,
+      },
+    });
+  },
 };
