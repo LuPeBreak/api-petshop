@@ -12,7 +12,7 @@ app.post("/", async (request, response) => {
     const dadosDoFornecedor = request.body;
     const fornecedor = new Fornecedor(dadosDoFornecedor);
     await fornecedor.criar();
-    response.json(fornecedor);
+    response.status(201).json(fornecedor);
   } catch (err) {
     response.status(400).json({ Message: err.message });
   }
