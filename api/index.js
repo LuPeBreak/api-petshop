@@ -1,11 +1,13 @@
 const express = require("express");
+const config = require("config");
+
 const app = express();
-const port = 3000;
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("hello world!!");
-});
+const fornecedores = require("./routes/fornecedores/");
+app.use("/api/fornecedores", fornecedores);
 
-app.listen(3000, () => console.log(`servidor iniciado na porta ${port}!`));
+app.listen(config.get("api.porta"), () =>
+  console.log(`servidor iniciado na porta ${config.get("api.porta")}!`)
+);

@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "migrations:create":"node api/database/criarTabelas.js",
     "dev": "nodemon api/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
