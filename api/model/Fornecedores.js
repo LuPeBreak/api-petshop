@@ -79,7 +79,7 @@ class Fornecedor {
     });
 
     if (Object.keys(errors).length > 0) {
-      const err = new Error("Campo(s) invalido");
+      const err = new Error("Campo(s) invalido(s)");
       err.error = errors;
       err.status = 400;
       throw err;
