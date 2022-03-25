@@ -69,12 +69,10 @@ app.delete("/:id", async (request, response, next) => {
       response.getHeader("Content-Type")
     );
 
-    response.json(
-      serializer.serialize({
-        message: "fornecedor deletado",
-        fornecedor: fornecedor,
-      })
-    );
+    response.json({
+      message: "fornecedor deletado",
+      fornecedor: serializer.serialize(fornecedor),
+    });
   } catch (err) {
     next(err);
   }
