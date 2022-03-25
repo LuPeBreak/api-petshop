@@ -34,7 +34,7 @@ app.use("/api/fornecedores", fornecedores);
 app.use((err, request, response, next) => {
   const serializer = new SerializeError(response.getHeader("Content-Type"));
 
-  response.status(err.status ? err.status : 500).json(
+  response.status(err.status ? err.status : 500).send(
     serializer.serialize({
       idError: err.idError,
       message: err.message,

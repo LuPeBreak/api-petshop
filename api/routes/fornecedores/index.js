@@ -9,7 +9,7 @@ app.get("/", async (_, response) => {
   const serializer = new SerializerFornecedor(
     response.getHeader("Content-Type")
   );
-  response.json(serializer.serialize(fornecedores));
+  response.send(serializer.serialize(fornecedores));
 });
 
 app.post("/", async (request, response, next) => {
@@ -20,7 +20,7 @@ app.post("/", async (request, response, next) => {
     const serializer = new SerializerFornecedor(
       response.getHeader("Content-Type")
     );
-    response.status(201).json(serializer.serialize(fornecedor));
+    response.status(201).send(serializer.serialize(fornecedor));
   } catch (err) {
     next(err);
   }
@@ -35,7 +35,7 @@ app.get("/:id", async (request, response, next) => {
       response.getHeader("Content-Type"),
       ["email", "dataCriacao", "dataAtualizacao", "versao"]
     );
-    response.json(serializer.serialize(fornecedor));
+    response.send(serializer.serialize(fornecedor));
   } catch (err) {
     next(err);
   }
@@ -53,7 +53,7 @@ app.put("/:id", async (request, response, next) => {
       response.getHeader("Content-Type")
     );
 
-    response.json(serializer.serialize(fornecedor));
+    response.send(serializer.serialize(fornecedor));
   } catch (err) {
     next(err);
   }
@@ -67,13 +67,16 @@ app.delete("/:id", async (request, response, next) => {
     await fornecedor.deletar();
 
     const serializer = new SerializerFornecedor(
-      response.getHeader("Content-Type")
+      response.getHeader("Content-Type"),
+      ["message", "fornecedor"]
     );
 
-    response.json({
-      message: "fornecedor deletado",
-      fornecedor: serializer.serialize(fornecedor),
-    });
+    response.send(
+      serializer.serialize({
+        message: "fornecedor deletado",
+        fornecedor: fornecedor,
+      })
+    );
   } catch (err) {
     next(err);
   }
