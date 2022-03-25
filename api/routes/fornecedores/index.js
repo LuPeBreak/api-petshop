@@ -2,9 +2,9 @@ const app = require("express").Router();
 const repository = require("../../repositories/FornecedorRepository");
 const Fornecedor = require("../../model/Fornecedores");
 
-app.get("/", async (req, res) => {
+app.get("/", async (_, response) => {
   const fornecedores = await repository.listar();
-  res.json(fornecedores);
+  response.json(fornecedores);
 });
 
 app.post("/", async (request, response, next) => {
