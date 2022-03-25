@@ -7,33 +7,29 @@ app.get("/", async (req, res) => {
   res.json(fornecedores);
 });
 
-app.post("/", async (request, response) => {
+app.post("/", async (request, response, next) => {
   try {
     const dadosDoFornecedor = request.body;
     const fornecedor = new Fornecedor(dadosDoFornecedor);
     await fornecedor.criar();
     response.status(201).json(fornecedor);
   } catch (err) {
-    response
-      .status(err.status ? err.status : 500)
-      .json({ Message: err.message, error: err.error });
+    next(err);
   }
 });
 
-app.get("/:id", async (request, response) => {
+app.get("/:id", async (request, response, next) => {
   try {
     const id = request.params.id;
     const fornecedor = new Fornecedor({ id: id });
     await fornecedor.carregar();
     response.json(fornecedor);
   } catch (err) {
-    response
-      .status(err.status ? err.status : 500)
-      .json({ Message: err.message });
+    next(err);
   }
 });
 
-app.put("/:id", async (request, response) => {
+app.put("/:id", async (request, response, next) => {
   try {
     const id = request.params.id;
     const dadosDoFornecedorAtualizados = request.body;
@@ -43,13 +39,11 @@ app.put("/:id", async (request, response) => {
 
     response.json(fornecedor);
   } catch (err) {
-    response
-      .status(err.status ? err.status : 500)
-      .json({ Message: err.message });
+    next(err);
   }
 });
 
-app.delete("/:id", async (request, response) => {
+app.delete("/:id", async (request, response, next) => {
   try {
     const id = request.params.id;
 
@@ -61,9 +55,7 @@ app.delete("/:id", async (request, response) => {
       fornecedor: fornecedor,
     });
   } catch (err) {
-    response
-      .status(err.status ? err.status : 500)
-      .json({ Message: err.message });
+  next(err);
   }
 });
 
