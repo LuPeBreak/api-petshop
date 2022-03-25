@@ -1,4 +1,5 @@
 const Migration = require("../database/migrations/MigrationFornecedor");
+const NotFound = require("../errors/NotFound");
 
 module.exports = {
   listar() {
@@ -10,9 +11,7 @@ module.exports = {
   async buscarPorId(id) {
     const encontrado = await Migration.findOne({ where: { id: id } });
     if (!encontrado) {
-      const err = new Error("fornecedor nao encontrado");
-      err.status = 404;
-      throw err;
+      throw new NotFound();
     }
     return encontrado;
   },
