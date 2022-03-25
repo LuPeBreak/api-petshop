@@ -32,7 +32,8 @@ app.get("/:id", async (request, response, next) => {
     const fornecedor = new Fornecedor({ id: id });
     await fornecedor.carregar();
     const serializer = new SerializerFornecedor(
-      response.getHeader("Content-Type")
+      response.getHeader("Content-Type"),
+      ["email", "dataCriacao", "dataAtualizacao", "versao"]
     );
     response.json(serializer.serialize(fornecedor));
   } catch (err) {
