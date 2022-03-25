@@ -1,10 +1,15 @@
 const app = require("express").Router();
 const repository = require("../../repositories/FornecedorRepository");
 const Fornecedor = require("../../model/Fornecedores");
+const SerializerFornecedor =
+  require("../../helpers/Serializer").SerializerFornecedor;
 
 app.get("/", async (_, response) => {
   const fornecedores = await repository.listar();
-  response.json(fornecedores);
+  const serializer = new SerializerFornecedor(
+    response.getHeader("Content-Type")
+  );
+  response.json(serializer.serialize(fornecedores));
 });
 
 app.post("/", async (request, response, next) => {
@@ -12,7 +17,10 @@ app.post("/", async (request, response, next) => {
     const dadosDoFornecedor = request.body;
     const fornecedor = new Fornecedor(dadosDoFornecedor);
     await fornecedor.criar();
-    response.status(201).json(fornecedor);
+    const serializer = new SerializerFornecedor(
+      response.getHeader("Content-Type")
+    );
+    response.status(201).json(serializer.serialize(fornecedor));
   } catch (err) {
     next(err);
   }
@@ -23,7 +31,10 @@ app.get("/:id", async (request, response, next) => {
     const id = request.params.id;
     const fornecedor = new Fornecedor({ id: id });
     await fornecedor.carregar();
-    response.json(fornecedor);
+    const serializer = new SerializerFornecedor(
+      response.getHeader("Content-Type")
+    );
+    response.json(serializer.serialize(fornecedor));
   } catch (err) {
     next(err);
   }
@@ -37,7 +48,11 @@ app.put("/:id", async (request, response, next) => {
     const fornecedor = new Fornecedor({ id, ...dadosDoFornecedorAtualizados });
     await fornecedor.atualiza({ ...dadosDoFornecedorAtualizados });
 
-    response.json(fornecedor);
+    const serializer = new SerializerFornecedor(
+      response.getHeader("Content-Type")
+    );
+
+    response.json(serializer.serialize(fornecedor));
   } catch (err) {
     next(err);
   }
@@ -50,12 +65,18 @@ app.delete("/:id", async (request, response, next) => {
     const fornecedor = new Fornecedor({ id });
     await fornecedor.deletar();
 
-    response.json({
-      message: "fornecedor deletado",
-      fornecedor: fornecedor,
-    });
+    const serializer = new SerializerFornecedor(
+      response.getHeader("Content-Type")
+    );
+
+    response.json(
+      serializer.serialize({
+        message: "fornecedor deletado",
+        fornecedor: fornecedor,
+      })
+    );
   } catch (err) {
-  next(err);
+    next(err);
   }
 });
 

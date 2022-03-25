@@ -3,7 +3,7 @@ const NotFound = require("../errors/NotFound");
 
 module.exports = {
   listar() {
-    return Migration.findAll();
+    return Migration.findAll({ raw: true });
   },
   inserir(fornecedor) {
     return Migration.create(fornecedor);
