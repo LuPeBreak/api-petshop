@@ -1,4 +1,7 @@
 const repository = require("../repositories/FornecedorRepository");
+const InvalidFields = require("../errors/InvalidFields");
+const MissingData = require("../errors/MissingData");
+
 class Fornecedor {
   constructor({
     id,
@@ -54,9 +57,7 @@ class Fornecedor {
     });
 
     if (Object.keys(dadosParaAtualizar).length === 0) {
-      const err = new Error("nao foram fornecidos dados para atualizar");
-      err.status = 400;
-      throw err;
+      throw new MissingData();
     }
 
     await repository.atualizar(this.id, dadosParaAtualizar);
@@ -79,10 +80,7 @@ class Fornecedor {
     });
 
     if (Object.keys(errors).length > 0) {
-      const err = new Error("Campo(s) invalido(s)");
-      err.error = errors;
-      err.status = 400;
-      throw err;
+      throw new InvalidFields(errors);
     }
   }
 }

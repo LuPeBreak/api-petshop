@@ -11,7 +11,7 @@ app.use("/api/fornecedores", fornecedores);
 app.use((err,request,response,next) => {
   response
     .status(err.status ? err.status : 500)
-    .json({ Message: err.message, error: err.error });
+    .json({ Message: err.message, fields: err.fields });
 });
 
 app.listen(config.get("api.porta"), () =>
