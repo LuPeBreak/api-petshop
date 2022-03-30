@@ -82,4 +82,7 @@ app.delete("/:id", async (request, response, next) => {
   }
 });
 
+const produtos = require("./produtos");
+app.use("/:idFornecedor/produtos", produtos);
+
 module.exports = app;
