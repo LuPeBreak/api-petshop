@@ -91,9 +91,9 @@ class Produto {
   async apagar() {
     return await repository.remover(this.id, this.fornecedor);
   }
-
+  // minha versao
   async diminuirEstoque(quantidade) {
-    this.carregar();
+    await this.carregar();
 
     if (
       typeof quantidade === "number" &&
@@ -112,6 +112,15 @@ class Produto {
       throw new Error("Quantidade invalida");
     }
   }
+  // versao do curso
+  // async diminuirEstoque(quantidade) {
+  //   return repository.subtrair(
+  //     this.id,
+  //     this.fornecedor,
+  //     "estoque",
+  //     this.estoque
+  //   );
+  // }
 }
 
 module.exports = Produto;

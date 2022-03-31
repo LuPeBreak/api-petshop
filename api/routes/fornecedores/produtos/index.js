@@ -7,6 +7,10 @@ app.get("/", async (req, res) => {
   const idFornecedor = req.fornecedor.id;
   const produtos = await repository.listar(idFornecedor);
   const serializer = new Serializer(res.getHeader("Content-Type"));
+  res.set(
+    "x-powered-by",
+    "https://www.linkedin.com/in/luisfelipedepaulacosta/"
+  );
   res.send(serializer.serialize(produtos));
 });
 
@@ -18,6 +22,14 @@ app.get("/:id", async (req, res, next) => {
     };
     const produto = new Produto(dados);
     await produto.carregar();
+    res.set(
+      "x-powered-by",
+      "https://www.linkedin.com/in/luisfelipedepaulacosta/"
+    );
+
+    res.set("ETag", produto.versao);
+    const timestamp = new Date(produto.dataAtualizacao).getTime();
+    res.set("Last-Modified", timestamp);
 
     const serializer = new Serializer(res.getHeader("Content-Type"), [
       "dataCriacao",
@@ -31,6 +43,28 @@ app.get("/:id", async (req, res, next) => {
   }
 });
 
+app.head("/:id", async (req, res, next) => {
+  try {
+    const dados = {
+      id: req.params.id,
+      fornecedor: req.fornecedor.id,
+    };
+    const produto = new Produto(dados);
+    await produto.carregar();
+    res.set(
+      "x-powered-by",
+      "https://www.linkedin.com/in/luisfelipedepaulacosta/"
+    );
+    res.set("ETag", produto.versao);
+    const timestamp = new Date(produto.dataAtualizacao).getTime();
+    res.set("Last-Modified", timestamp);
+    res.end();
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 app.post("/", async (req, res, next) => {
   try {
     const idFornecedor = req.fornecedor.id;
@@ -40,6 +74,18 @@ app.post("/", async (req, res, next) => {
     });
     const produto = new Produto(produtoParaCadastrar);
     await produto.criar();
+    res.set(
+      "x-powered-by",
+      "https://www.linkedin.com/in/luisfelipedepaulacosta/"
+    );
+
+    res.set("ETag", produto.versao);
+    const timestamp = new Date(produto.dataAtualizacao).getTime();
+    res.set("Last-Modified", timestamp);
+    res.set(
+      "Location",
+      `/api/fornecedores/${produto.fornecedor}/produtos/${produto.id}`
+    );
     const serializer = new Serializer(res.getHeader("Content-Type"));
     res.status(201).send(serializer.serialize(produto));
   } catch (err) {
@@ -52,6 +98,11 @@ app.delete("/:id", async (req, res) => {
   const idFornecedor = req.fornecedor.id;
   const produto = new Produto({ id, fornecedor: idFornecedor });
   await produto.apagar();
+  res.set(
+    "x-powered-by",
+    "https://www.linkedin.com/in/luisfelipedepaulacosta/"
+  );
+
   res.status(204).end();
 });
 
@@ -65,27 +116,64 @@ app.put("/:id", async (req, res, next) => {
     const produto = new Produto(dados);
 
     await produto.atualizar();
+    await produto.carregar();
+    res.set(
+      "x-powered-by",
+      "https://www.linkedin.com/in/luisfelipedepaulacosta/"
+    );
 
+    res.set("ETag", produto.versao);
+    const timestamp = new Date(produto.dataAtualizacao).getTime();
+    res.set("Last-Modified", timestamp);
     res.status(204).end();
   } catch (err) {
     next(err);
   }
 });
 
+// minha versao
 app.post("/:id/diminuir-estoque", async (req, res, next) => {
   try {
     const produto = new Produto({
       id: req.params.id,
       fornecedor: req.fornecedor.id,
     });
-    
+
     const quantidade = req.body.quantidade;
     await produto.diminuirEstoque(quantidade);
 
+    await produto.carregar();
+    res.set(
+      "x-powered-by",
+      "https://www.linkedin.com/in/luisfelipedepaulacosta/"
+    );
+
+    res.set("ETag", produto.versao);
+    const timestamp = new Date(produto.dataAtualizacao).getTime();
+    res.set("Last-Modified", timestamp);
     res.status(204).end();
   } catch (err) {
     next(err);
   }
 });
+
+// versao do curso
+// app.post("/:id/diminuir-estoque", async (req, res, next) => {
+//   try {
+//     const produto = new Produto({
+//       id: req.params.id,
+//       fornecedor: req.fornecedor.id,
+//     });
+
+//     await produto.carregar();
+
+//     const quantidade = req.body.quantidade;
+//     produto.estoque = produto.estoque - quantidade;
+//     produto.diminuirEstoque();
+//     res.status(204).end();
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
 module.exports = app;
