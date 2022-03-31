@@ -72,6 +72,22 @@ class SerializerFornecedor extends Serializer {
   }
 }
 
+class SerializerProduto extends Serializer {
+  constructor(
+    contentType,
+    extraFields,
+    tagSingular = "Produto",
+    tagPlural = "Produtos"
+  ) {
+    super(contentType);
+    this.publicFields = ["id", "titulo", "preco", "estoque"].concat(
+      extraFields || []
+    );
+    this.tagSingular = tagSingular;
+    this.tagPlural = tagPlural;
+  }
+}
+
 class SerializeError extends Serializer {
   constructor(
     contentType,
@@ -91,6 +107,7 @@ class SerializeError extends Serializer {
 module.exports = {
   Serializer: Serializer,
   SerializerFornecedor: SerializerFornecedor,
+  SerializerProduto: SerializerProduto,
   SerializeError: SerializeError,
   acceptedContentTypes: ["application/json", "application/xml"],
 };

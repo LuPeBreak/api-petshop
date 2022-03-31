@@ -1,5 +1,6 @@
 const repository = require("../repositories/ProdutoRepository");
 const InvalidFields = require("../errors/InvalidFields");
+const MissingData = require("../errors/MissingData");
 
 class Produto {
   constructor({
@@ -20,6 +21,42 @@ class Produto {
     this.dataCriacao = dataCriacao;
     this.dataAtualizacao = dataAtualizacao;
     this.versao = versao;
+  }
+  async carregar() {
+    const produto = await repository.buscarPorId(this.id, this.fornecedor);
+
+    this.titulo = produto.titulo;
+    this.preco = produto.preco;
+    this.estoque = produto.estoque;
+    this.dataAtualizacao = produto.dataAtualizacao;
+    this.dataCriacao = produto.dataCriacao;
+    this.versao = produto.versao;
+  }
+
+  async atualizar() {
+    const dadosParaAtualizar = {};
+
+    if (typeof this.titulo === "string" && this.titulo.length > 0) {
+      dadosParaAtualizar.titulo = this.titulo;
+    }
+    if (typeof this.preco === "number" && this.preco > 0) {
+      dadosParaAtualizar.preco = this.preco;
+    }
+    if (typeof this.estoque === "number") {
+      dadosParaAtualizar.estoque = this.estoque;
+    }
+
+    if (Object.keys(dadosParaAtualizar).length === 0) {
+      throw new MissingData();
+    }
+
+    return await repository.atualizar(
+      {
+        id: this.id,
+        fornecedor: this.fornecedor,
+      },
+      dadosParaAtualizar
+    );
   }
 
   validar() {
@@ -53,6 +90,27 @@ class Produto {
 
   async apagar() {
     return await repository.remover(this.id, this.fornecedor);
+  }
+
+  async diminuirEstoque(quantidade) {
+    this.carregar();
+
+    if (
+      typeof quantidade === "number" &&
+      quantidade > 0 &&
+      quantidade <= this.estoque
+    ) {
+      this.estoque -= quantidade;
+      return await repository.atualizar(
+        {
+          id: this.id,
+          fornecedor: this.fornecedor,
+        },
+        { estoque: this.estoque }
+      );
+    } else {
+      throw new Error("Quantidade invalida");
+    }
   }
 }
 

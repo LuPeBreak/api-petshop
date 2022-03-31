@@ -7,6 +7,7 @@ module.exports = {
       where: {
         fornecedor: idFornecedor,
       },
+      raw: true,
     });
   },
   inserir(dados) {
@@ -19,5 +20,22 @@ module.exports = {
         fornecedor: idFornecedor,
       },
     });
+  },
+  async buscarPorId(id, fornecedor) {
+    const produtoEncontrado = await Migration.findOne({
+      where: {
+        id: id,
+        fornecedor: fornecedor,
+      },
+      raw: true,
+    });
+    if (!produtoEncontrado) {
+      throw new NotFound("Produto nao encontrado");
+    }
+    return produtoEncontrado;
+  },
+  async atualizar(dadosDoProduto, dadosParaAtualizar) {
+    console.log(dadosParaAtualizar);
+    return Migration.update(dadosParaAtualizar, { where: dadosDoProduto });
   },
 };
