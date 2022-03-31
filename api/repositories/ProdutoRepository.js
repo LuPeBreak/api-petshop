@@ -9,4 +9,15 @@ module.exports = {
       },
     });
   },
+  inserir(dados) {
+    return Migration.create(dados);
+  },
+  remover(id, idFornecedor) {
+    return Migration.destroy({
+      where: {
+        id: id,
+        fornecedor: idFornecedor,
+      },
+    });
+  },
 };

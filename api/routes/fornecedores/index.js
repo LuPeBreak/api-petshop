@@ -82,7 +82,19 @@ app.delete("/:id", async (request, response, next) => {
   }
 });
 
+const verificarExisteFornecedor = async (req, res, next) => {
+  try {
+    const id = req.params.idFornecedor;
+    const fornecedor = new Fornecedor({ id: id });
+    await fornecedor.carregar();
+    req.fornecedor = fornecedor;
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
 const produtos = require("./produtos");
-app.use("/:idFornecedor/produtos", produtos);
+app.use("/:idFornecedor/produtos", verificarExisteFornecedor, produtos);
 
 module.exports = app;
