@@ -26,6 +26,12 @@ app.use((request, response, next) => {
   next();
 });
 
+//middleware para permitir sites externos acessarem nossa api (cors)
+app.use((request, response, next) => {
+  response.set("Access-Control-Allow-Origin", "*");
+  next();
+});
+
 //rotas
 const fornecedores = require("./routes/fornecedores/");
 app.use("/api/fornecedores", fornecedores);
