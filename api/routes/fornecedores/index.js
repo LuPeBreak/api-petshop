@@ -13,7 +13,8 @@ app.options("/", (request, response, next) => {
 app.get("/", async (_, response) => {
   const fornecedores = await repository.listar();
   const serializer = new SerializerFornecedor(
-    response.getHeader("Content-Type")
+    response.getHeader("Content-Type"),
+    ["empresa"]
   );
   response.send(serializer.serialize(fornecedores));
 });
@@ -24,7 +25,8 @@ app.post("/", async (request, response, next) => {
     const fornecedor = new Fornecedor(dadosDoFornecedor);
     await fornecedor.criar();
     const serializer = new SerializerFornecedor(
-      response.getHeader("Content-Type")
+      response.getHeader("Content-Type"),
+      ["empresa"]
     );
     response.status(201).send(serializer.serialize(fornecedor));
   } catch (err) {
@@ -44,7 +46,7 @@ app.get("/:id", async (request, response, next) => {
     await fornecedor.carregar();
     const serializer = new SerializerFornecedor(
       response.getHeader("Content-Type"),
-      ["email", "dataCriacao", "dataAtualizacao", "versao"]
+      ["empresa", "email", "dataCriacao", "dataAtualizacao", "versao"]
     );
     response.send(serializer.serialize(fornecedor));
   } catch (err) {
@@ -61,7 +63,8 @@ app.put("/:id", async (request, response, next) => {
     await fornecedor.atualiza({ ...dadosDoFornecedorAtualizados });
 
     const serializer = new SerializerFornecedor(
-      response.getHeader("Content-Type")
+      response.getHeader("Content-Type"),
+      ["empresa"]
     );
 
     response.send(serializer.serialize(fornecedor));
@@ -79,13 +82,13 @@ app.delete("/:id", async (request, response, next) => {
 
     const serializer = new SerializerFornecedor(
       response.getHeader("Content-Type"),
-      ["message", "fornecedor"]
+      ["message", "fornecedor", "empresa"]
     );
 
     response.send(
       serializer.serialize({
         message: "fornecedor deletado",
-        fornecedor: fornecedor,
+        fornecedor: serializer.filter(fornecedor),
       })
     );
   } catch (err) {
@@ -104,7 +107,6 @@ const verificarExisteFornecedor = async (req, res, next) => {
     next(err);
   }
 };
-
 
 const produtos = require("./produtos");
 app.use("/:idFornecedor/produtos", verificarExisteFornecedor, produtos);

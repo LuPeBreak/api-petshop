@@ -36,6 +36,8 @@ app.use((request, response, next) => {
 //rotas
 const fornecedores = require("./routes/fornecedores/");
 app.use("/api/fornecedores", fornecedores);
+const fornecedoresv2 = require("./routes/fornecedores/routes.v2");
+app.use("/api/v2/fornecedores", fornecedoresv2);
 
 // middleware para tratamento de errors
 app.use((err, request, response, next) => {

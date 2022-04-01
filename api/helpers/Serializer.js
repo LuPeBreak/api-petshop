@@ -64,7 +64,7 @@ class SerializerFornecedor extends Serializer {
     tagPlural = "Fornecedores"
   ) {
     super(contentType);
-    this.publicFields = ["id", "empresa", "categoria"].concat(
+    this.publicFields = ["id", "categoria"].concat(
       extraFields || []
     );
     this.tagSingular = tagSingular;
