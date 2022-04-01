@@ -4,6 +4,12 @@ const Fornecedor = require("../../model/Fornecedores");
 const SerializerFornecedor =
   require("../../helpers/Serializer").SerializerFornecedor;
 
+app.options("/", (request, response, next) => {
+  response.set("Access-Control-Allow-Methods", "GET, POST");
+  response.set("Access-Control-Allow-Headers", "Content-Type");
+  response.status(204).end();
+});
+
 app.get("/", async (_, response) => {
   const fornecedores = await repository.listar();
   const serializer = new SerializerFornecedor(
@@ -26,6 +32,11 @@ app.post("/", async (request, response, next) => {
   }
 });
 
+app.options("/:id", (request, response, next) => {
+  response.set("Access-Control-Allow-Methods", "GET,PUT,DELETE");
+  response.set("Access-Control-Allow-Headers", "Content-Type");
+  response.status(204).end();
+});
 app.get("/:id", async (request, response, next) => {
   try {
     const id = request.params.id;
@@ -93,6 +104,7 @@ const verificarExisteFornecedor = async (req, res, next) => {
     next(err);
   }
 };
+
 
 const produtos = require("./produtos");
 app.use("/:idFornecedor/produtos", verificarExisteFornecedor, produtos);

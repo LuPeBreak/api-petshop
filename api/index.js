@@ -12,8 +12,9 @@ app.use(express.json());
 // middleware para checagem de tipo de conteudo pedido
 app.use((request, response, next) => {
   let requestedContentType = request.header("Accept");
+  console.log(requestedContentType)
 
-  if (requestedContentType == "*/*") {
+  if (requestedContentType == "*/*" || requestedContentType =="text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9") {
     requestedContentType = "application/json";
   }
 
@@ -29,9 +30,9 @@ app.use((request, response, next) => {
 //middleware para permitir sites externos acessarem nossa api (cors)
 app.use((request, response, next) => {
   response.set("Access-Control-Allow-Origin", "*");
+  response.set
   next();
 });
-
 //rotas
 const fornecedores = require("./routes/fornecedores/");
 app.use("/api/fornecedores", fornecedores);
